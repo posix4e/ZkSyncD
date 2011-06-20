@@ -1,5 +1,12 @@
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.SystemConfiguration;
+import org.apache.zookeeper.KeeperException;
+import org.apache.zookeeper.WatchedEvent;
+import org.apache.zookeeper.Watcher;
+import org.apache.zookeeper.ZooKeeper;
+import org.apache.zookeeper.proto.WatcherEvent;
+
+import java.io.IOException;
+
+import static Main.*;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,17 +26,19 @@ import org.apache.commons.configuration.SystemConfiguration;
  * limitations under the License.
  */
 
-public class Main {
+public class SyncBlock implements Watcher {
+    static ZooKeeper zooKeeper;
 
-    static Configuration config = new SystemConfiguration();
-    public static void main(String [] args) {
-
-        if (args.length != 2) {
-            System.out.println("usage: zksyncd <zookeeper_connection_string> <destination_directory>");
-            System.out.println("For documentation on the zookeeper connection string check the zookeeper api.");
+    SyncBlock() throws KeeperException, IOException {
+        if (zooKeeper == null ){
+            zooKeeper = new ZooKeeper(config.getString(ZkSyncConsts.CONNECTION_STRING),
+                    ZkSyncConsts.SESSION_TIMEOUT,
+                    this);
         }
-        config.setProperty(ZkSyncConsts.CONNECTION_STRING, args[0]);
-        config.setProperty(ZkSyncConsts.DESTINATION_DIRECTORY, args[1]);
-        SyncBlock syncBlock = new SyncBlock();
+    }
+
+    synchronized public void process(WatchedEvent event) {
+
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 }
