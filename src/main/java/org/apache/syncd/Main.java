@@ -1,7 +1,4 @@
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.SystemConfiguration;
-
-/**
+package org.apache.syncd; /**                      3
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,11 +15,17 @@ import org.apache.commons.configuration.SystemConfiguration;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.SystemConfiguration;
+import org.apache.zookeeper.KeeperException;
+
+import java.io.IOException;
+
 
 public class Main {
 
     static Configuration config = new SystemConfiguration();
-    public static void main(String [] args) {
+    public static void main(String [] args) throws IOException, KeeperException, InterruptedException {
 
         if (args.length != 2) {
             System.out.println("usage: zksyncd <zookeeper_connection_string> <destination_directory>");
@@ -31,5 +34,7 @@ public class Main {
         config.setProperty(ZkSyncConsts.CONNECTION_STRING, args[0]);
         config.setProperty(ZkSyncConsts.DESTINATION_DIRECTORY, args[1]);
         SyncBlock syncBlock = new SyncBlock();
+        syncBlock.run();
+        syncBlock.join();
     }
 }
